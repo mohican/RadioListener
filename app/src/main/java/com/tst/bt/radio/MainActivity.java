@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.widget.TextView;
+
+import com.tst.bt.radio.enums.ENetworkStatus;
 
 import java.util.List;
 
@@ -18,7 +21,7 @@ public class MainActivity extends Activity {
     private MainActivity mClass;
     private IntentFilter mFilter;
 
-
+    private TextView txtNetworkStatus;
 
 
     @Override
@@ -31,6 +34,8 @@ public class MainActivity extends Activity {
             Intent intentMyIntentService = new Intent(mClass, ServiceRadioListener.class);
             startService(intentMyIntentService);
         }
+
+        txtNetworkStatus = (TextView) findViewById(R.id.text_network_status);
 
         mFilter = new IntentFilter();
         mFilter.addAction(ServiceRadioListener.ACTION_UPDATE_UI);
@@ -55,6 +60,13 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
+            ENetworkStatus netStatus = ENetworkStatus.parse(intent.getIntExtra(ServiceRadioListener.NETWORK_STATUS_AT, -1));
+
+            if (netStatus != null) {
+                txtNetworkStatus.setText(netStatus.name());
+            } else {
+                txtNetworkStatus.setText("no_data");
+            }
 
         }
     };

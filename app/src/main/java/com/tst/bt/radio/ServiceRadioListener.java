@@ -18,9 +18,10 @@ public class ServiceRadioListener extends Service {
 
     private static final String LOG_TAG = "ServiceRadioLogStreamer";
 
-
+    public static final String NETWORK_STATUS_AT = "+CREG";
     public static final String ACTION_UPDATE_UI = "ServiceRadioLogStreamer.ACTION_UPDATE_UI";
 
+    private int mNetworkStatus = -1;
 
 
 
@@ -115,7 +116,11 @@ public class ServiceRadioListener extends Service {
                 String cmdName = splitedCmd[1];
                 cmdName = cmdName.replace("AT<", "");
 
+                if (cmdName.equals(NETWORK_STATUS_AT)) {
 
+                    String netStat = splitedParams.length == 5 ? splitedParams[1] : splitedParams[0];
+                    mNetworkStatus = Integer.valueOf(netStat).intValue();
+                }
 
                 sendData();
             }
@@ -125,7 +130,7 @@ public class ServiceRadioListener extends Service {
 
             Intent local = new Intent();
             local.setAction(ACTION_UPDATE_UI);
-
+            local.putExtra(NETWORK_STATUS_AT, mNetworkStatus);
             mCtx.sendBroadcast(local);
 
         }
