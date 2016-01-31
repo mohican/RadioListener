@@ -18,10 +18,11 @@ public class ServiceRadioListener extends Service {
 
     private static final String LOG_TAG = "ServiceRadioLogStreamer";
 
-
+    public static final String CALL_STATUS_AT = "+ECPI";
     public static final String ACTION_UPDATE_UI = "ServiceRadioLogStreamer.ACTION_UPDATE_UI";
 
 
+    private int mCallStatus = -1;
 
 
 
@@ -116,6 +117,10 @@ public class ServiceRadioListener extends Service {
                 cmdName = cmdName.replace("AT<", "");
 
 
+                if (cmdName.equals(CALL_STATUS_AT)) {
+
+                    mCallStatus = Integer.valueOf(splitedParams[1]).intValue();
+                }
 
                 sendData();
             }
@@ -125,7 +130,7 @@ public class ServiceRadioListener extends Service {
 
             Intent local = new Intent();
             local.setAction(ACTION_UPDATE_UI);
-
+            local.putExtra(CALL_STATUS_AT, mCallStatus);
             mCtx.sendBroadcast(local);
 
         }

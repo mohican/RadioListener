@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.widget.TextView;
+
+import com.tst.bt.radio.enums.ECallStatus;
 
 import java.util.List;
 
@@ -19,7 +22,7 @@ public class MainActivity extends Activity {
     private IntentFilter mFilter;
 
 
-
+    private TextView txtCallStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,9 @@ public class MainActivity extends Activity {
             Intent intentMyIntentService = new Intent(mClass, ServiceRadioListener.class);
             startService(intentMyIntentService);
         }
+
+
+        txtCallStatus = (TextView) findViewById(R.id.text_call_status);
 
         mFilter = new IntentFilter();
         mFilter.addAction(ServiceRadioListener.ACTION_UPDATE_UI);
@@ -55,6 +61,13 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
+            ECallStatus callStatus = ECallStatus.parse(intent.getIntExtra(ServiceRadioListener.CALL_STATUS_AT, -1));
+
+            if (callStatus != null) {
+                txtCallStatus.setText(callStatus.name());
+            } else {
+                txtCallStatus.setText("no_call");
+            }
 
         }
     };
